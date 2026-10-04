@@ -360,3 +360,37 @@ error: class BrokenBoth inherits unrelated defaults for describe()
 
 ## Почему требуется явный выбор
 - Класс в Java может наследоваться только от одного класса, но реализовать несколько интерфейсов. С default-методами это фактически множественное наследование поведения. Если два источника дают разные реализации одного метода, программист должен решить, чью использовать. Это гарантирует детерминированное поведение: один и тот же код даёт один и тот же результат независимо от порядка объявления интерфейсов.
+
+`----------------------------------`
+
+# Задачка 11. Равенство в иерархии
+
+## Что сделано
+- `Point` и `ColoredPoint extends Point` с equals через instanceof. Демонстрируется нарушение симметричности.
+- Исправление 1: `PointStrict` и `ColoredPointStrict` со строгим сравнением классов через `getClass()`.
+- Исправление 2: `PointValue` и `ColoredPointValue` на композиции, без наследования.
+- `Main` показывает три случая.
+
+## Нарушение симметричности
+```java
+Point p = new Point(1, 2);
+ColoredPoint cp = new ColoredPoint(1, 2, Color.RED);
+
+p.equals(cp)   // true — cp instanceof Point
+cp.equals(p)   // false — p не instanceof ColoredPoint
+```
+- Point.equals пускает любого, кто instanceof Point. ColoredPoint.equals требует instanceof ColoredPoint. Из-за этого один и тот же вопрос даёт разные ответы в зависимости от порядка. Это нарушает контракт equals (симметричность).
+
+## Исправление 1: строгое сравнение классов
+- Заменить `instanceof` на `getClass() != o.getClass()`.
+```java
+if (o == null || getClass() != o.getClass()) return false;
+```
+- Point и ColoredPoint никогда не равны - разные классы. Симметрично, но теряется полиморфное равенство: объекты с одинаковыми координатами считаются разными.
+
+## Исправление 2: композиция
+- ColoredPointValue не наследуется от PointValue, а содержит его. Иерархии нет - нет конфликта equals.
+- Симметричность гарантирована структурно: PointValue и ColoredPointValue - разные типы, ни один не является другим.
+
+## Почему final value class проще
+- Если Point объявлен final, никто не может создать ColoredPoint extends Point. Проблема исчезает в зародыше: нет наследников - нет конфликтов equals.
