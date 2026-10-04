@@ -247,3 +247,50 @@ LOG before: hello
 LOG after: hello
 ```
 - Логирование внутри - вызывается на каждой попытке. Пара LOG дважды.
+
+`----------------------------------`
+
+# Задача 8. Нарушение LSP
+
+## Что было бы неправильно
+- Стандартная «сломанная» иерархия:
+```java
+class CourseRepository {
+    void save(Course c) { ... }
+    Optional<Course> findById(long id) { ... }
+}
+
+class ReadOnlyCourseRepository extends CourseRepository {
+    @Override
+    void save(Course c) {
+        throw new UnsupportedOperationException();
+    }
+}
+```
+- Проблема: клиент, работающий с `CourseRepository`, ожидает, что `save` сохраняет. Если ему подсунут `ReadOnlyCourseRepository`, метод упадёт в runtime. Клиент не мог этого предвидеть - статический тип обещал работающий `save`.
+- Это нарушение принципа подстановки Лисков (LSP): объект наследника должен быть подставляем вместо объекта родителя без сюрпризов.
+
+## Что сделано
+- Интерфейсы разделены по возможностям:
+  - `ReadableCourseRepository` - только `findById`.
+  - `WritableCourseRepository` - только `save`.
+  - `FullCourseRepository` - оба.
+  - `ReadOnlyCourseRepository` - реализует только `ReadableCourseRepository`.
+  - `InMemoryCourseRepository` - реализует `FullCourseRepository`.
+- `ReadOnlyCourseRepository` больше НЕ обещает `save`. Нарушение LSP исчезло: read-only реализация не может попасть туда, где нужен `save`.
+
+## Как это работает в `Main`
+- Клиент чтения (`printCourse`) принимает `ReadableCourseRepository`. Работает и с read-only, и с полным.
+- Клиент записи (`addCourse`) принимает `WritableCourseRepository`. Полный репозиторий подходит, read-only - нет.
+- Попытка передать read-only в клиент записи ловится компилятором:
+```
+error: incompatible types: ReadOnlyCourseRepository cannot be converted to WritableCourseRepository
+```
+- Это ошибка компиляции, а не исключение в runtime. Ошибка видна сразу, до запуска.
+
+## Использованные средства стандартной библиотеки
+- `Map<Long, Course>` - словарь «ключ -> значение». В нашем случае ключ - id курса, значение - сам объект Course. Позволяет быстро найти курс по id: `storage.get(id)`. Если ключа нет - вернётся null.
+
+- `HashMap` - стандартная реализация `Map` на хеш-таблице. Поиск по ключу почти мгновенный (в среднем O(1)), не зависит от размера словаря. Переменная объявлена как `Map`, а создаётся как `HashMap`: тип переменной - абстракция, реализация - конкретность.
+
+- `Optional<Course>` - контейнер, который может содержать значение, а может быть пустым. Используется в `findById`, чтобы честно показать: «курс может не найтись». Клиент обязан обработать случай «не найдено» - компилятор это проверит. Это лучше, чем возвращать null: null не виден из сигнатуры, легко забыть проверить и получить NullPointerException.
