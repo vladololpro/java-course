@@ -394,3 +394,30 @@ if (o == null || getClass() != o.getClass()) return false;
 
 ## Почему final value class проще
 - Если Point объявлен final, никто не может создать ColoredPoint extends Point. Проблема исчезает в зародыше: нет наследников - нет конфликтов equals.
+
+`----------------------------------`
+
+# Задачка 12. Sealed-иерархия результата
+
+## Что сделано
+- `sealed interface EnrollmentResult` с permits на три типа: `Accepted`, `Rejected`, `WaitListed`.
+- Все три типа - final.
+- `ResultPrinter.describe` использует exhaustive switch без default.
+- `Main` демонстрирует все три варианта.
+
+## Что такое sealed
+- `sealed` - механизм, ограничивающий, кто может наследоваться от класса или реализовывать интерфейс. Только типы, перечисленные в `permits`, могут быть подтипами. Больше никто - даже в другом пакете - не сможет.
+- Подтипы обязаны быть final, sealed или non-sealed.
+
+## Exhaustive switch
+- Компилятор знает все возможные реализации sealed-интерфейса. Поэтому switch без default может быть проверен на полноту: если не покрыт хотя бы один случай, компиляция падает.
+- Без sealed такой switch потребовал бы default, который ловит «всё остальное» - и маскирует пропущенные случаи.
+
+## Эксперимент: добавление нового permitted-типа
+- Временно создан `Pending implements EnrollmentResult`, добавлен в `permits`. Компиляция сразу упала в `ResultPrinter.java`:
+```
+error: the switch expression does not cover all possible input values
+        return switch (result) {
+               ^
+```
+- Компилятор указал точное место, где switch не покрывает новый случай. Это главная ценность sealed: невозможно забыть обработать новый вариант - компилятор заставит.
