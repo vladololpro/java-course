@@ -304,7 +304,7 @@ for (String s : copy) {
 - Время: копирование O(n), даже если удалить надо один элемент.
 - Не атомарно: между копированием и удалением оригинал может измениться в многопоточном коде.
 - Не нужно: Iterator и removeIf решают задачу без копии.
-  - Копирование оправдано редко: если элементов мало, если логика сложнее простого удаления, или если удалять надо много элементов и проще пройтись по копии. Какdefault - не годится.
+  - Копирование оправдано редко: если элементов мало, если логика сложнее простого удаления, или если удалять надо много элементов и проще пройтись по копии. Как default - не годится.
 
 ### Демонстрация
 ```
@@ -324,3 +324,70 @@ after copy way: [A, C, D]
 - В первом блоке list.remove(s) удалил B, но следующий next обнаружил изменение счётчика и бросил исключение. Обход прервался. Список уже изменён: [A, C, D].
 - Сообщение исключения может быть null - у ConcurrentModificationException часто нет текста.
 - В остальных трёх блоках результат один и тот же: [A, C, D]. Разница только в способе.
+
+`----------------------------------`
+
+# Задача 6. Первый generic-тип
+
+## Условие
+- Реализуйте Result<T> или Page<T> без raw types. Добавьте фабрики успеха/ошибки, инварианты и методы чтения. Покажите две конкретизации и compile-time защиту от смешения.
+
+## Что сделано
+- Result<T> - generic-класс, хранит либо значение типа T (успех), либо сообщение об ошибке (провал).
+- Фабрики: Result.success(value) и Result.failure(message).
+- Методы чтения: isSuccess, value, message.
+- Main показывает две конкретизации: Result<Course> и Result<String>.
+
+## Что такое generic
+- Generic - параметр типа. Пишется в угловых скобках: <T>. Класс работает с любым типом, но компилятор проверяет типы.
+- Без generic пришлось бы хранить Object и приводить вручную, ошибки вылезали бы в runtime.
+- С generic компилятор знает тип заранее. Попытка положить не тот тип - ошибка компиляции.
+
+## Raw type
+- Raw type - использование generic-класса без параметра: Box box = new Box();
+- Компилятор тогда работает с Object, проверка типов теряется.
+- В современном Java raw types не используют.
+
+## Инварианты Result
+- Либо success = true, value не null, message null.
+- Либо success = false, value null, message не null.
+- Оба поля не могут быть заполнены одновременно. Оба не могут быть null одновременно.
+- Это обеспечивается приватным конструктором и фабриками: success и failure - единственные способы создать Result.
+
+## Демонстрация
+```
+=== Result<Course> ===
+isSuccess: true
+value: Java Basics
+message: null
+
+isSuccess: false
+value: null
+message: course not found
+
+=== Result<String> ===
+isSuccess: true
+value: hello
+message: null
+
+isSuccess: false
+value: null
+message: bad input
+```
+- Для success: value заполнено, message null.
+- Для failure: value null, message заполнено.
+- Две конкретизации работают одинаково: Result<Course> и Result<String>.
+
+## Compile-time защита
+- Ошибка компиляции при попытке положить String в Result<Course>:
+```
+error: incompatible types: inference variable T has incompatible bounds
+        Result<Course> broken = Result.success("not a course");
+                                              ^
+    equality constraints: Course
+    lower bounds: String
+  where T is a type-variable:
+    T extends Object declared in method <T>success(T)
+1 error
+```
+- Это означает, что смешать типы нельзя. Ошибка видна до запуска, а не в runtime.
