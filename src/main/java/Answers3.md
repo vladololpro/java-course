@@ -354,7 +354,7 @@ after copy way: [A, C, D]
 - Оба поля не могут быть заполнены одновременно. Оба не могут быть null одновременно.
 - Это обеспечивается приватным конструктором и фабриками: success и failure - единственные способы создать Result.
 
-## Демонстрация
+### Демонстрация
 ```
 === Result<Course> ===
 isSuccess: true
@@ -391,3 +391,59 @@ error: incompatible types: inference variable T has incompatible bounds
 1 error
 ```
 - Это означает, что смешать типы нельзя. Ошибка видна до запуска, а не в runtime.
+
+`----------------------------------`
+
+# Задача 7. Generic-метод
+
+## Условие
+- Напишите firstOrThrow(List<T>), swap(List<T>, int, int) и indexBy(List<T>, Function<T,K>). Последний метод должен явно обрабатывать конфликт ключей.
+
+## Что сделано
+- ListUtils с тремя generic-методами: firstOrThrow, swap, indexBy.
+- Main демонстрирует все три, включая пустой список и конфликт ключей.
+
+## Generic-метод
+- Generic-метод - метод со своим параметром типа. Пишется перед возвращаемым типом: public static <T> T firstOrThrow(List<T> list).
+- При вызове компилятор подставляет конкретный тип. Для List<String> T = String.
+
+## firstOrThrow
+- Возвращает первый элемент списка.
+- Если список пуст - бросает IllegalArgumentException с сообщением list is empty.
+- Обработка пустого случая явная, не через возврат null.
+
+## swap
+- Меняет местами элементы по двум индексам.
+- Через временную переменную: tmp = get(i), set(i, get(j)), set(j, tmp).
+- Работает для любого типа T.
+
+## indexBy
+- Строит Map<K, T> из списка.
+- Ключ получается функцией keyExtractor: Function<T, K>. Значение - сам элемент.
+- Function<T, K> - интерфейс из java.util.function, у него один метод apply(T), возвращает K.
+- Запись `c -> c.id()` - короткая форма: принимает c, возвращает c.id().
+- При совпадении ключей - исключение IllegalArgumentException с сообщением duplicate key: <ключ>.
+- Молчаливая перезапись не допускается: если два элемента дают один ключ, терять данные нельзя.
+
+### Демонстрация
+```
+=== firstOrThrow ===
+first: Anna
+on empty: list is empty
+
+=== swap ===
+before: [A, B, C]
+after swap(0,2): [C, B, A]
+
+=== indexBy ===
+map size: 3
+id 2 -> Algorithms
+
+=== indexBy with duplicate key ===
+on duplicate: duplicate key: 1
+```
+- firstOrThrow на непустом списке вернул Anna.
+- На пустом - исключение, поймано через try-catch, напечатано сообщение.
+- swap(0,2) переставил первый и последний элементы.
+- indexBy построил Map с тремя парами.
+- На дубликате ключа - исключение, второй элемент не перезаписал первый.
