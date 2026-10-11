@@ -477,7 +477,7 @@ on duplicate: duplicate key: 1
 - Реализует Comparable<Score>: compareTo сравнивает по points через Integer.compare.
 - Значит объекты Score можно сортировать и сравнивать.
 
-## Демонстрация
+### Демонстрация
 ```
 === max on Integer ===
 max: 9
@@ -495,3 +495,62 @@ on empty: list is empty
 - max на String вернул cherry (по алфавиту последнее).
 - max на Score вернул Score(80) - наибольший балл.
 - На пустом списке - исключение, поймано через try-catch.
+
+`----------------------------------`
+
+# Задача 9. PECS на практике
+
+## Условие
+- Создайте методы копирования из producer-списка в consumer-список. Объясните, почему нельзя добавлять конкретный объект в List<? extends Course> и что разрешено читать из List<? super Course>.
+
+## Что сделано
+- OnlineCourse - подтип Course для демонстрации наследования.
+- CopyUtils с методом copy(List<? extends T> src, List<? super T> dst).
+- Main демонстрирует копирование, чтение из producer, запись в consumer.
+
+## Wildcards
+- ? - wildcard, «любой тип».
+- ? extends T - «T или его подтип».
+- ? super T - «T или его родитель»
+
+## PECS
+- Producer Extends, Consumer Super.
+- Если коллекция отдаёт элементы - ? extends T.
+- Если коллекция принимает элементы - ? super T.
+
+## List<? extends T>
+- Читать можно как T: каждый элемент точно T или подтип.
+- Добавлять нельзя: точный тип неизвестен. Если список на самом деле List<OnlineCourse>, положить обычный Course туда нельзя.
+
+## List<? super T>
+- Добавлять T можно: любой T подойдёт в List<T>, List<Object>, List<родитель T>.
+- Читать можно только как Object: точный тип может быть Object.
+
+## Метод copy
+- public static <T> void copy(List<? extends T> src, List<? super T> dst).
+- src - producer (extends), dst - consumer (super).
+- Работает для разных комбинаций: List<OnlineCourse> -> List<Course>, List<Course> -> List<Object> и т.д.
+
+### Демонстрация
+```
+=== copy: producer extends, consumer super ===
+dst size: 2
+dst[0]: Java Online
+
+=== copy into List<Object> ===
+objects size: 2
+
+=== List<? extends Course> — читать можно ===
+read from ? extends Course: Java Online
+
+=== List<? super Course> — писать можно ===
+added to ? super Course, size: 1
+
+=== List<? super Course> — читать только как Object ===
+read from ? super Course: Course
+```
+- В первом блоке скопировали List<OnlineCourse> в List<Course> — сработало благодаря extends и super.
+- Во втором скопировали в List<Object> — тоже сработало.
+- В третьем прочитали из List<? extends Course> как Course.
+- В четвёртом добавили Course в List<? super Course>.
+- В пятом прочитали из List<? super Course> как Object (не как Course).
