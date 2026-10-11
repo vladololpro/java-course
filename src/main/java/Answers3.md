@@ -74,4 +74,66 @@ Iteration LinkedList: 5 ms
 
 `----------------------------------`
 
-# Задача 2. Map и индекс
+# Задача 3. Map и индекс
+
+## Условие
+
+- Постройте индекс CourseId -> Course, обработайте повторный ID без молчаливой перезаписи. Сравните get, containsKey, putIfAbsent и computeIfAbsent.
+
+## Что сделано
+- CourseIndex с Map<Long, Course> на HashMap.
+- Методы addSafely, get, contains, putIfAbsent, computeIfAbsent.
+- Main демонстрирует все четыре метода.
+
+## Что такое Map
+- Map<K, V> - коллекция пар «ключ -> значение». По ключу можно быстро найти значение. Ключи уникальны, значения могут повторяться. Порядок зависит от реализации.
+- Для задачи «индекс CourseId -> Course» выбрана HashMap: поиск по ключу O(1), порядок не важен, ключи Long уже имеют корректные equals/hashCode.
+
+## Молчаливая перезапись
+- Метод put(k, v) перезаписывает значение, если ключ уже есть, и ничего об этом не сообщает. Если это не задумано - баг. Чтобы избежать - используют containsKey + put, либо putIfAbsent, либо computeIfAbsent.
+
+## Сравнение методов
+- get(k) - вернуть значение или null. Не меняет Map.
+- containsKey(k) - true/false, есть ли ключ. Не меняет Map.
+- put(k, v) - положить значение. Если ключ был - перезаписать. Возвращает предыдущее значение или null.
+- putIfAbsent(k, v) - положить, только если ключа нет. Возвращает текущее (старое) значение или null.
+- computeIfAbsent(k, f) - если ключа нет, вычислить через функцию и положить. Функция вызывается только когда ключа нет.
+
+## Демонстрация
+- Add safely (без перезаписи):
+```
+add java:    true
+add algo:    true
+add javaDup: false
+size: 2
+course 1 still: Java Basics
+```
+  - javaDup не добавлен - id=1 уже был. Старое значение осталось.
+
+- containsKey / get:
+```
+contains 1: true
+contains 9: false
+get 1: Java Basics
+get 9: null
+```
+  - get возвращает null, если ключа нет. Это норма, не ошибка.
+
+- putIfAbsent:
+```
+putIfAbsent on existing id=1 returned: Java Basics
+course 1 still: Java Basics
+putIfAbsent on new id=3 returned: null
+course 3 now: Databases
+```
+  - На существующий ключ - ничего не делает, возвращает старое.
+  - На новый - кладёт, возвращает null.
+
+- computeIfAbsent:
+```
+computeIfAbsent on existing id=1: Java Basics
+computeIfAbsent on new id=4: Networks
+course 4 now: Networks
+```
+  - На существующий - не вызывает функцию, возвращает старое.
+  - На новый - вызывает функцию, кладёт результат.
