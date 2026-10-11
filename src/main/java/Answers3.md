@@ -554,3 +554,77 @@ read from ? super Course: Course
 - В третьем прочитали из List<? extends Course> как Course.
 - В четвёртом добавили Course в List<? super Course>.
 - В пятом прочитали из List<? super Course> как Object (не как Course).
+
+`----------------------------------`
+
+# Задача 10. Контракт ключа
+
+## Условие
+- Проверьте сущности Course в HashSet и как ключи HashMap. Измените поле, не участвующее в равенстве, затем намеренно включите его в hash и воспроизведите проблему.
+
+## Что сделано
+- StableKey - ключ, где в hashCode участвует только id. tag можно менять без последствий.
+- BrokenKey - ключ, где в hashCode участвует и tag. Изменение tag ломает поиск.
+- Main демонстрирует оба случая, а также поведение model.Course в HashSet и HashMap.
+
+## Почему это важно
+- HashSet кладёт элемент в корзину по hashCode. Поиск (contains) снова считает hashCode и идёт в нужную корзину, потом сравнивает через equals.
+- Если между добавлением и поиском изменить поле, участвующее в hashCode - хеш станет другим. Коллекция пойдёт в другую корзину и не найдёт элемент. Хотя он физически в Set.
+
+## StableKey
+- В hashCode участвует только id: Long.hashCode(id).
+- tag не входит ни в hashCode, ни в equals.
+- Меняем tag - хеш не меняется. contains находит элемент и до, и после.
+- Это правильно для ключей: значимые поля не меняются.
+
+## BrokenKey
+- В hashCode участвуют id и tag: 31 * Long.hashCode(id) + tag.hashCode().
+- tag входит и в equals.
+- Меняем tag после добавления - хеш меняется. contains возвращает false.
+- Элемент физически в Set (size = 1), но contains его не находит.
+- Печать Set показывает элемент - потому что он реально там лежит.
+- Это классическая ловушка: менять поля, участвующие в hashCode, после добавления в HashSet или HashMap нельзя.
+
+## Course в HashSet
+- Course из model не переопределяет equals и hashCode. Работает Object.equals (сравнение ссылок).
+- c1 и c2 с одинаковыми полями - разные объекты. c1.equals(c2) = false.
+- Оба попали в Set. size = 2.
+- Хотя поля одинаковые, для Set они разные.
+
+## Course как ключ HashMap
+- Course не переопределяет equals и hashCode.
+- byId.put(a.id(), a) - кладёт по ключу 1.
+- byId.put(b.id(), b) - снова ключ 1, перезаписывает.
+- map size = 1. Ключи 1 (Long) одинаковые, поэтому второй put заменил значение.
+
+## Почему для Course нельзя провести эксперимент
+- Course не переопределяет equals и hashCode. Работает Object.equals (сравнение ссылок) и Object.hashCode (от адреса в памяти).
+- Ни одно поле Course не участвует в hashCode. Значит, нет поля, которое можно «включить в hash» - включать нечего.
+- Условие требует: изменить поле в hash и воспроизвести проблему. Для Course это невозможно.
+- Поэтому сделали свои классы StableKey и BrokenKey: сами задаём, какие поля входят в hashCode, и можем их менять.
+
+### Демонстрация
+```
+=== StableKey: tag не входит в hashCode ===
+contains before change: true
+contains after change:  true
+size: 1
+
+=== BrokenKey: tag входит в hashCode ===
+contains before change: true
+contains after change:  false
+size: 1
+set still has it: [BrokenKey(id=1, tag=after)]
+
+=== Course в HashSet ===
+c1.equals(c2): false
+set size: 2
+
+=== Course как ключ HashMap ===
+map size: 1
+id=1 -> Java
+```
+- StableKey: tag не в hashCode - contains работает и после смены tag.
+- BrokenKey: tag в hashCode - contains ломается после смены tag, хотя элемент физически в Set.
+- Course в HashSet: equals по ссылке, оба объекта разные, size = 2.
+- Course в HashMap: ключ Long одинаковый, второй put перезаписал значение, size = 1.
