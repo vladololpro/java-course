@@ -85,7 +85,7 @@ public class ListDemo {
         }
         long t3 = System.nanoTime();
 
-        System.out.println("Index access (10k) ArrayList:  " + (t2 - t1) / 1_000_000 + " ms");
+        System.out.println("Index access (10k) ArrayList: " + (t2 - t1) / 1_000_000 + " ms");
         System.out.println("Index access (10k) LinkedList: " + (t3 - t2) / 1_000_000 + " ms");
         System.out.println("(checksum " + sum1 + " / " + sum2 + ")");
 
@@ -98,7 +98,7 @@ public class ListDemo {
         for (int v : linkedList) sum4 += v;
         long t6 = System.nanoTime();
 
-        System.out.println("Iteration ArrayList:  " + (t5 - t4) / 1_000_000 + " ms");
+        System.out.println("Iteration ArrayList: " + (t5 - t4) / 1_000_000 + " ms");
         System.out.println("Iteration LinkedList: " + (t6 - t5) / 1_000_000 + " ms");
         System.out.println("(checksum " + sum3 + " / " + sum4 + ")");
     }

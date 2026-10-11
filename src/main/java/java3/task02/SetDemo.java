@@ -21,7 +21,7 @@ public class SetDemo {
 
         Set<CourseCodeWithoutEquals> set = new HashSet<>(list);
 
-        System.out.println("Input:  " + list);
+        System.out.println("Input: " + list);
         System.out.println("HashSet: " + set);
         System.out.println("Size: " + set.size() + " (ожидалось 3, но дубликаты не убрались)");
     }
@@ -36,7 +36,7 @@ public class SetDemo {
 
         Set<CourseCode> set = new LinkedHashSet<>(list);
 
-        System.out.println("Input:        " + list);
+        System.out.println("Input: " + list);
         System.out.println("LinkedHashSet: " + set);
         System.out.println("Size: " + set.size() + " (дубликаты убраны, порядок сохранён)");
     }

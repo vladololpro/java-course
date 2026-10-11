@@ -13,8 +13,8 @@ public class Main {
         Course javaDup = new Course(1, "Java Advanced", 50);
 
         System.out.println("=== addSafely ===");
-        System.out.println("add java:    " + index.addSafely(java));
-        System.out.println("add algo:    " + index.addSafely(algo));
+        System.out.println("add java: " + index.addSafely(java));
+        System.out.println("add algo: " + index.addSafely(algo));
         System.out.println("add javaDup: " + index.addSafely(javaDup));
         System.out.println("size: " + index.size());
         System.out.println("course 1 still: " + index.get(1).title());

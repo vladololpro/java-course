@@ -199,10 +199,10 @@ poll on empty: null
 ```
 after offer A, B: [A, B]
 element: A
-peek:    A
-still:   [A, B]
+peek: A
+still: [A, B]
 remove: A
-poll:   B
+poll: B
 after remove and poll: []
 ```
   - element и peek показывают голову, очередь не меняется. remove и poll извлекают.
