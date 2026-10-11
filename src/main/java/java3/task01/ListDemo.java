@@ -7,15 +7,13 @@ import java.util.List;
 /* Демонстрация операций List: добавление, вставка, удаление,
  * поиск дубликатов. И сравнение ArrayList vs LinkedList. */
 public class ListDemo {
-
-    /* Основные операции с List: порядок, вставка, удаление. */
     public static void basicOperations() {
         List<Registration> registrations = new ArrayList<>();
 
         Registration r1 = new Registration(1, 10);
         Registration r2 = new Registration(2, 10);
         Registration r3 = new Registration(3, 20);
-        Registration r4 = new Registration(1, 10);   /* дубликат r1 */
+        Registration r4 = new Registration(1, 10);
 
         registrations.add(r1);
         registrations.add(r2);
@@ -31,7 +29,6 @@ public class ListDemo {
         System.out.println("After remove at 1: " + registrations);
     }
 
-    /* Поиск дубликатов без Set — просто перебор. */
     public static void findDuplicates() {
         List<Registration> registrations = new ArrayList<>();
         registrations.add(new Registration(1, 10));
@@ -62,8 +59,6 @@ public class ListDemo {
         }
     }
 
-    /* Измерение: чтение по индексу и обход.
-     * Не бенчмарк — просто грубая оценка порядка величин. */
     public static void measure() {
         final int N = 100_000;
 
@@ -74,7 +69,6 @@ public class ListDemo {
             linkedList.add(i);
         }
 
-        /* Чтение по индексу: 10_000 обращений к случайным позициям. */
         long t1 = System.nanoTime();
         long sum1 = 0;
         for (int i = 0; i < 10_000; i++) {
@@ -94,7 +88,6 @@ public class ListDemo {
         System.out.println("Index access (10k) LinkedList: " + (t3 - t2) / 1_000_000 + " ms");
         System.out.println("(checksum " + sum1 + " / " + sum2 + ")");
 
-        /* Обход: for-each. */
         long t4 = System.nanoTime();
         long sum3 = 0;
         for (int v : arrayList) sum3 += v;
