@@ -696,3 +696,71 @@ id=1 -> Java
 - Доступ по индексу: O(1).
 - Память: компактная.
 - Порядок сохраняется, индекс стабилен.
+
+`----------------------------------`
+
+# Задача 12. Generic repository
+
+## Условие
+- Спроектируйте Repository<ID, T> с save, findById, findAll, deleteById. In-memory реализация не отдаёт наружу изменяемую внутреннюю коллекцию, не принимает null, определяет семантику повторного save.
+
+## Что сделано
+- Repository<ID, T> - generic-класс с Map<ID, T> на HashMap.
+- Методы save, findById, findAll, deleteById.
+- Main демонстрирует save, upsert, копию в findAll, deleteById, проверки null.
+
+## Что такое Repository
+- Repository - хранилище объектов. Внешний код говорит «сохрани», «дай по id», «дай все», «удали».
+- Как именно хранятся объекты - не важно: в памяти, в файле, в БД.
+- В задаче - in-memory реализация на HashMap.
+
+## Generic <ID, T>
+- T - тип объекта (Course, Student).
+- ID - тип идентификатора (Long, String).
+- Компилятор проверяет: нельзя положить Course туда, где ожидается Student. Ошибка компиляции.
+
+## Семантика save
+- Метод save работает как upsert: update или insert.
+- Если ключа нет - добавляет новый объект.
+- Если ключ есть - заменяет значение.
+- Один метод для создания и обновления.
+- В коде это работает через Map.put - он и добавляет, и перезаписывает.
+
+## findAll возвращает копию
+- Метод возвращает new ArrayList<>(storage.values()) - новый список с теми же элементами.
+- Клиент может менять этот список (clear, add, remove) - внутреннее хранилище не затрагивается.
+- Если бы метод возвращал storage.values() напрямую - это было бы представление над Map. Клиент мог бы очистить репозиторий извне.
+- Правило: внутренние коллекции не отдаём наружу. Отдаём копию или неизменяемое представление.
+
+## Проверки null
+- save(null id) - IllegalArgumentException с сообщением id is null.
+- save(id, null) - IllegalArgumentException с сообщением entity is null.
+- findById(null) - IllegalArgumentException.
+- deleteById(null) - IllegalArgumentException.
+- null в id или объекте - ошибка вызывающего кода, а не нормальное поведение.
+
+### Демонстрация
+```
+=== save and findById ===
+found: Java
+
+=== save with same id (upsert) ===
+after upsert: Java Advanced
+
+=== findAll returns copy ===
+all size: 2
+after client clear, repo size still: 2
+
+=== deleteById ===
+findById(2): null
+size: 1
+
+=== null checks ===
+save null id: id is null
+save null entity: entity is null
+```
+- save и findById: сохранили два курса, нашли первый по id.
+- upsert: сохранили с тем же id - значение заменилось на Java Advanced.
+- findAll returns copy: клиент очистил список, полученный из findAll. Внутри репозитория данные не тронуты - size всё ещё 2.
+- deleteById: удалили id=2. findById(2) вернул null. Size стал 1.
+- null checks: save с null id и null entity - оба бросили IllegalArgumentException с понятными сообщениями.
