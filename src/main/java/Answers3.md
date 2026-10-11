@@ -137,3 +137,72 @@ course 4 now: Networks
 ```
   - На существующий - не вызывает функцию, возвращает старое.
   - На новый - вызывает функцию, кладёт результат.
+
+`----------------------------------`
+
+# Задача 4. Очередь ожидания
+
+## Условие
+- Реализуйте FIFO waitlist через Queue: добавить, посмотреть следующего, извлечь, обработать пустую очередь. Объясните пары add/offer, remove/poll, element/peek.
+
+## Что сделано
+- Waitlist с Queue<String> на ArrayDeque.
+- Методы: add (offer), peekNext (peek), pollNext (poll), isEmpty, size.
+- Main демонстрирует FIFO, пустую очередь, пары методов.
+
+## Что такое Queue
+- Queue - коллекция в порядке FIFO: первый добавленный извлекается первым. Как очередь в магазине. Добавление - в конец, извлечение - с начала. Индексов нет.
+- Реализации:
+  - ArrayDeque - массив, современный выбор для очереди.
+  - LinkedList - список, тоже работает.
+  - PriorityQueue - извлекает по приоритету, не FIFO.
+- Выбрана ArrayDeque: FIFO и быстро.
+
+## Разбор методов
+- Методы:
+  - add(e) / offer(e) - добавить.
+  - remove() / poll() - извлечь.
+  - element() / peek() - посмотреть голову без извлечения.
+- Разница:
+  - Первая версия (add, remove, element) бросает исключение при неудаче.
+  - Вторая версия (offer, poll, peek) возвращает null/false.
+
+- На неограниченных очередях (ArrayDeque, LinkedList) add и offer работают одинаково - обе добавляют.
+- remove на пустой очереди бросает NoSuchElementException. poll на пустой возвращает null.
+- element на пустой бросает NoSuchElementException. peek на пустой возвращает null.
+
+- Использование:
+  - offer/poll/peek - безопасные. Не бросают исключений. Обычно используют их.
+  - add/remove/element - когда пустая очередь это ошибка, и хочется узнать об этом через исключение.
+
+## Демонстрация
+- FIFO:
+```
+size: 3
+peekNext: student-1
+pollNext: student-1
+pollNext: student-2
+size after 2 polls: 1
+peekNext: student-3
+```
+  - Кто первый пришёл - тот первый ушёл. peekNext показывает голову, не извлекая pollNext извлекает.
+
+- Пустая очередь:
+```
+isEmpty: true
+peek on empty: null
+poll on empty: null
+```
+  - peek и poll на пустой очереди возвращают null. Если бы использовали element или remove - было бы исключение.
+
+- Пары методов:
+```
+after offer A, B: [A, B]
+element: A
+peek:    A
+still:   [A, B]
+remove: A
+poll:   B
+after remove and poll: []
+```
+  - element и peek показывают голову, очередь не меняется. remove и poll извлекают.
