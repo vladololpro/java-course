@@ -764,3 +764,83 @@ save null entity: entity is null
 - findAll returns copy: клиент очистил список, полученный из findAll. Внутри репозитория данные не тронуты - size всё ещё 2.
 - deleteById: удалили id=2. findById(2) вернул null. Size стал 1.
 - null checks: save с null id и null entity - оба бросили IllegalArgumentException с понятными сообщениями.
+
+`----------------------------------`
+
+# Задача 13. Обратный индекс
+
+## Условие
+- По курсам и тегам постройте Map<Tag, Set<CourseId>>; поддержите добавление, удаление курса и пересечение нескольких тегов. Пустые set не остаются в индексе. Обоснуйте реализацию каждой коллекции.
+
+## Что сделано
+- TagIndex с Map<String, Set<Long>> на HashMap.
+- Методы addCourse, removeCourse, findByTags, tagCount.
+- Main показывает добавление, пересечение и удаление.
+
+## Что такое обратный индекс
+- Обычно данные выглядят так: у курса есть набор тегов.
+- Обратный индекс переворачивает: по тегу можно найти курсы.
+- Так работают поисковики: ищешь слово - находишь документы.
+- У нас: Map<Tag, Set<CourseId>>.
+
+## Выбор коллекций
+- Map<String, Set<Long>> на HashMap.
+- Map - потому что ищем по ключу (тегу). HashMap - порядок не важен, поиск O(1).
+- Set<Long> на HashSet - id курсов не должны дублироваться. contains O(1).
+- Если бы внутри был List, один и тот же курс мог попасть дважды.
+
+## addCourse
+- Проходит по всем тегам курса.
+- Для каждого тега: если тега нет - создать пустой Set, затем добавить id.
+- Внутри Map.put, Set.add.
+
+## findByTags
+- Пересечение: курсы, у которых есть все указанные теги.
+- Берём первый тег - его Set становится результатом.
+- Для каждого следующего тега: retainAll оставляет только общие id.
+- Если тег не найден в индексе - возвращаем пустой Set (пересечение с пустым = пусто).
+
+## removeCourse
+- Проходит по всем записям Map.
+- Удаляет courseId из каждого Set.
+- Если Set стал пустым - удаляет запись из Map через Iterator.remove.
+- Обход через Iterator, потому что удаляем записи Map во время обхода. Удаление через Map.remove напрямую вызвало бы ConcurrentModificationException.
+
+## tagCount
+- Возвращает количество тегов в индексе.
+- Позволяет видеть, когда пустой тег удалился.
+
+### Демонстрация
+```
+=== add courses ===
+added: course 1 -> [java, backend]
+added: course 2 -> [java, algorithms]
+added: course 3 -> [java, backend, databases]
+tag count: 4
+
+=== findByTags (intersection) ===
+java + backend:    [1, 3]
+java + databases:  [3]
+java + algorithms: [2]
+java + unknown:    []
+
+=== removeCourse(1) ===
+removed: course 1
+java:       [2, 3]
+backend:    [3]
+algorithms: [2]
+databases:  [3]
+tag count: 4
+
+=== removeCourse(3) ===
+removed: course 3
+java:       [2]
+backend:    []
+algorithms: [2]
+databases:  []
+tag count: 2
+```
+- add courses: добавили три курса, в индексе четыре тега.
+- findByTags: пересечения. java+backend дал курсы 1 и 3 (у обоих есть оба тега). java+unknown пуст - тега unknown нет.
+- removeCourse(1): удалили курс 1 из java и backend. algorithms и databases не изменились (курса 1 там не было). tag count = 4, ни один тег не опустел.
+- removeCourse(3): удалили курс 3 из java, backend, databases. backend и databases стали пустыми, поэтому удалены из индекса. tag count = 2, было 4. Пустые set не остались.
