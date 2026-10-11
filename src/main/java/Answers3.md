@@ -447,3 +447,51 @@ on duplicate: duplicate key: 1
 - swap(0,2) переставил первый и последний элементы.
 - indexBy построил Map с тремя парами.
 - На дубликате ключа - исключение, второй элемент не перезаписал первый.
+
+`----------------------------------`
+
+# Задача 8. Ограничение типа
+
+## Условие
+- Реализуйте max для элементов Comparable. Корректно сформулируйте bound с учётом подтипов. Проверьте на Integer, String и собственном value object.
+
+## Что сделано
+- MaxUtils с generic-методом max.
+- Score - собственный value object, реализующий Comparable<Score>.
+- Main демонстрирует max на Integer, String, Score.
+
+## Что такое Comparable
+- Интерфейс Comparable<T> говорит: объекты этого класса можно сравнивать друг с другом.
+- Один метод: int compareTo(T other).
+- Возвращает: отрицательное - если this меньше other; 0 - если равны; положительное - если this больше.
+- Integer, String уже реализуют Comparable.
+
+## Bound
+- Generic-метод можно ограничить: принимать только те типы, которые реализуют Comparable.
+- Запись: public static <T extends Comparable<T>> T max(List<T> list).
+- Читается: T - любой тип, который реализует Comparable<T>.
+- Без ограничения компилятор не знает, есть ли у T метод compareTo, и не даст его вызвать.
+
+## Score
+- Собственный value object с одним полем points.
+- Реализует Comparable<Score>: compareTo сравнивает по points через Integer.compare.
+- Значит объекты Score можно сортировать и сравнивать.
+
+## Демонстрация
+```
+=== max on Integer ===
+max: 9
+
+=== max on String ===
+max: cherry
+
+=== max on Score ===
+max: Score(80)
+
+=== max on empty list ===
+on empty: list is empty
+```
+- max на Integer вернул 9.
+- max на String вернул cherry (по алфавиту последнее).
+- max на Score вернул Score(80) - наибольший балл.
+- На пустом списке - исключение, поймано через try-catch.
