@@ -7,6 +7,7 @@ import java.util.List;
 /* Демонстрация операций List: добавление, вставка, удаление,
  * поиск дубликатов. И сравнение ArrayList vs LinkedList. */
 public class ListDemo {
+    
     public static void basicOperations() {
         List<Registration> registrations = new ArrayList<>();
 
