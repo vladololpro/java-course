@@ -13,31 +13,29 @@ public class DateParser {
 
     public void run() {
         String[] testInputs = {
-            "15.10.2024",
-            "01.01.2025",
-            "31.02.2024",
-            "30.02.2023",
-            "15.10.2024!",
-            "15-10-2024",
-            "1.1.2024"
+            "15.10.2024", "01.01.2025", "31.02.2024", "30.02.2023",
+            "15.10.2024!", "15-10-2024", "1.1.2024"
         };
 
         for (String input : testInputs) {
-            parseAndReport(input);
+            try {
+                LocalDate date = parseDate(input);
+                System.out.println("OK: \"" + input + "\" -> " + date);
+            } catch (InvalidDateFieldException e) {
+                System.out.println("FAIL: \"" + input + "\"");
+                System.out.println("  Поле: " + e.getFieldName());
+                System.out.println("  Значение: " + e.getInputValue());
+                System.out.println("  Причина: " + e.getMessage());
+            }
         }
     }
 
-    private void parseAndReport(String input) {
+    private LocalDate parseDate(String input) {
         try {
-            LocalDate date = LocalDate.parse(input, FORMATTER);
-            System.out.println("OK: \"" + input + "\" -> " + date);
+            return LocalDate.parse(input, FORMATTER);
         } catch (DateTimeParseException e) {
-            System.out.println("FAIL: \"" + input + "\"");
-            System.out.println("  Поле: не удалось распарсить дату");
-            System.out.println("  Значение: " + e.getParsedString());
-            if (e.getCause() != null) {
-                System.out.println("  Причина: " + e.getCause().getMessage());
-            }
+            throw new InvalidDateFieldException("date", input, 
+                e.getCause() != null ? e.getCause().getMessage() : "invalid format");
         }
     }
 }

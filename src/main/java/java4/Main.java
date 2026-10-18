@@ -58,5 +58,9 @@ public class Main {
         System.out.println("\n--- Задание 11: Instant и зоны ---");
         LocalDateTimeResolver demo11 = new LocalDateTimeResolver();
         demo11.run();
+
+        System.out.println("\n--- Задание 12: DST-кейс ---");
+        WebinarSchedule demo12 = new WebinarSchedule();
+        demo12.runDstCase();
     }
 }
