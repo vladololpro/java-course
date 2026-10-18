@@ -6,6 +6,7 @@ import java4.strings.CourseCode;
 import java4.numbers.IntegerPolicy;
 import java4.numbers.DecimalDemo;
 import java4.numbers.DiscountAllocator;
+import java4.numbers.RandomSampleService;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -33,5 +34,9 @@ public class Main {
         System.out.println("\n--- Задание 6: Масштаб и округление ---");
         DiscountAllocator demo6 = new DiscountAllocator();
         demo6.run();
+
+        System.out.println("\n--- Задание 7: Случайность и Math ---");
+        RandomSampleService demo7 = new RandomSampleService();
+        demo7.run();
     }
 }
