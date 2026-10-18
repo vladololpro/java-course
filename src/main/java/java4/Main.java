@@ -9,6 +9,7 @@ import java4.numbers.DiscountAllocator;
 import java4.numbers.RandomSampleService;
 import java4.time.StudyCalendar;
 import java4.time.WebinarSchedule;
+import java4.time.DateParser;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -48,5 +49,9 @@ public class Main {
         System.out.println("\n--- Задание 9: Period и Duration ---");
         WebinarSchedule demo9 = new WebinarSchedule();
         demo9.run();
+
+        System.out.println("\n--- Задание 10: Строгий DateTimeFormatter ---");
+        DateParser demo10 = new DateParser();
+        demo10.run();
     }
 }
