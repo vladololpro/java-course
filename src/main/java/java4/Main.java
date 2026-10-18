@@ -10,6 +10,7 @@ import java4.numbers.RandomSampleService;
 import java4.time.StudyCalendar;
 import java4.time.WebinarSchedule;
 import java4.time.DateParser;
+import java4.time.LocalDateTimeResolver;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -53,5 +54,9 @@ public class Main {
         System.out.println("\n--- Задание 10: Строгий DateTimeFormatter ---");
         DateParser demo10 = new DateParser();
         demo10.run();
+
+        System.out.println("\n--- Задание 11: Instant и зоны ---");
+        LocalDateTimeResolver demo11 = new LocalDateTimeResolver();
+        demo11.run();
     }
 }
