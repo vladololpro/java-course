@@ -13,6 +13,7 @@ import java4.time.DateParser;
 import java4.time.LocalDateTimeResolver;
 import java4.domain.CourseTitle;
 import java4.domain.Money;
+import java4.domain.PricingService;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -72,5 +73,9 @@ public class Main {
         System.out.println("\n--- Задание 14: Money ---");
         Money demo14 = new Money(new java.math.BigDecimal("0.00"), "RUB");
         demo14.run();
+
+        System.out.println("\n--- Задание 15: Комплексная задача ---");
+        PricingService demo15 = new PricingService();
+        demo15.run();
     }
 }
