@@ -7,6 +7,7 @@ import java4.numbers.IntegerPolicy;
 import java4.numbers.DecimalDemo;
 import java4.numbers.DiscountAllocator;
 import java4.numbers.RandomSampleService;
+import java4.time.StudyCalendar;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -38,5 +39,9 @@ public class Main {
         System.out.println("\n--- Задание 7: Случайность и Math ---");
         RandomSampleService demo7 = new RandomSampleService();
         demo7.run();
+
+        System.out.println("\n--- Задание 8: LocalDate ---");
+        StudyCalendar demo8 = new StudyCalendar();
+        demo8.run();
     }
 }
