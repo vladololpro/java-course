@@ -11,6 +11,7 @@ import java4.time.StudyCalendar;
 import java4.time.WebinarSchedule;
 import java4.time.DateParser;
 import java4.time.LocalDateTimeResolver;
+import java4.domain.CourseTitle;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -62,5 +63,9 @@ public class Main {
         System.out.println("\n--- Задание 12: DST-кейс ---");
         WebinarSchedule demo12 = new WebinarSchedule();
         demo12.runDstCase();
+
+        System.out.println("\n--- Задание 13: Нормализованный поиск ---");
+        CourseTitle demo13 = new CourseTitle("Java Basics");
+        demo13.run();
     }
 }
