@@ -12,6 +12,7 @@ import java4.time.WebinarSchedule;
 import java4.time.DateParser;
 import java4.time.LocalDateTimeResolver;
 import java4.domain.CourseTitle;
+import java4.domain.Money;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -67,5 +68,9 @@ public class Main {
         System.out.println("\n--- Задание 13: Нормализованный поиск ---");
         CourseTitle demo13 = new CourseTitle("Java Basics");
         demo13.run();
+
+        System.out.println("\n--- Задание 14: Money ---");
+        Money demo14 = new Money(new java.math.BigDecimal("0.00"), "RUB");
+        demo14.run();
     }
 }
