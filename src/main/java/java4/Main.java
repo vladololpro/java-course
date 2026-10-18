@@ -3,6 +3,7 @@ package java4;
 import java4.strings.StringIdentityDemo;
 import java4.strings.ReportBuilder;
 import java4.strings.CourseCode;
+import java4.numbers.IntegerPolicy;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -18,5 +19,9 @@ public class Main {
         System.out.println("\n--- Задание 3: Выражение с группами ---");
         CourseCode demo3 = new CourseCode();
         demo3.run();
+
+        System.out.println("\n--- Задание 4: Autoboxing и null ---");
+        IntegerPolicy demo4 = new IntegerPolicy();
+        demo4.run();
     }
 }
