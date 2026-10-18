@@ -4,6 +4,7 @@ import java4.strings.StringIdentityDemo;
 import java4.strings.ReportBuilder;
 import java4.strings.CourseCode;
 import java4.numbers.IntegerPolicy;
+import java4.numbers.DecimalDemo;
 
 /* Общая точка входа для всех заданий Java 4. */
 public class Main {
@@ -23,5 +24,9 @@ public class Main {
         System.out.println("\n--- Задание 4: Autoboxing и null ---");
         IntegerPolicy demo4 = new IntegerPolicy();
         demo4.run();
+
+        System.out.println("\n--- Задание 5: BigDecimal ---");
+        DecimalDemo demo5 = new DecimalDemo();
+        demo5.run();
     }
 }
