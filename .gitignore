@@ -1,3 +1,6 @@
 *vscode/
 out/
 target/
+catalog_dir/
+*.txt
+!README.md

@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 public class CatalogFileService {
 
     public void run() {
-        Path validPath = Paths.get("catalog.txt");
         Path directoryPath = Paths.get("catalog_dir");
+        Path validPath = directoryPath.resolve("catalog.txt");
         Path missingPath = Paths.get("missing.txt");
 
         String content = "Курс 1: Java\nКурс 2: Spring\nКурс 3: Databases";
