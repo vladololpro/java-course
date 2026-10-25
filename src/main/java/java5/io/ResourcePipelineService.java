@@ -10,8 +10,8 @@ import java.io.IOException;
 public class ResourcePipelineService {
 
     public void run() {
-        String inputFile = "pipeline_in.txt";
-        String outputFile = "pipeline_out.txt";
+        String inputFile = "catalog_dir/pipeline_in.txt";
+        String outputFile = "catalog_dir/pipeline_out.txt";
 
         try (BufferedWriter initWriter = new BufferedWriter(new FileWriter(inputFile))) {
             initWriter.write("Строка 1\n");

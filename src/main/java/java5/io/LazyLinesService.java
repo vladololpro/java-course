@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 public class LazyLinesService {
 
     public void run() {
-        Path file = Paths.get("lazy_lines.txt");
+        Path file = Paths.get("catalog_dir/lazy_lines.txt");
 
         try {
             Files.writeString(file, "Строка А\nСтрока Б\nСтрока В\n");

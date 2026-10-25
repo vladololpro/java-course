@@ -10,7 +10,7 @@ import java.io.IOException;
 public class BufferedTextService {
 
     public void run() {
-        String filename = "buffered_text.txt";
+        String filename = "catalog_dir/buffered_text.txt";
 
         // Запись через BufferedWriter
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
