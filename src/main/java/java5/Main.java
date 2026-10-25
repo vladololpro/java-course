@@ -8,6 +8,7 @@ import java5.io.BinaryFormatService;
 import java5.io.SafeFileReplaceService;
 import java5.io.CatalogImporterService;
 import java5.io.StreamingImportService;
+import java5.io.VersionedFormatService;
 
 /* Общая точка входа для заданий Java 5. */
 public class Main {
@@ -43,5 +44,9 @@ public class Main {
         System.out.println("\n--- Задание 8: Потоковый импорт ---");
         StreamingImportService demo8 = new StreamingImportService();
         demo8.run();
+
+        System.out.println("\n--- Задание 9: Версионируемый формат ---");
+        VersionedFormatService demo9 = new VersionedFormatService();
+        demo9.run();
     }
 }
