@@ -7,6 +7,7 @@ import java5.io.LazyLinesService;
 import java5.io.BinaryFormatService;
 import java5.io.SafeFileReplaceService;
 import java5.io.CatalogImporterService;
+import java5.io.StreamingImportService;
 
 /* Общая точка входа для заданий Java 5. */
 public class Main {
@@ -38,5 +39,9 @@ public class Main {
         System.out.println("\n--- Задание 7: Частично повреждённый импорт ---");
         CatalogImporterService demo7 = new CatalogImporterService();
         demo7.run();
+
+        System.out.println("\n--- Задание 8: Потоковый импорт ---");
+        StreamingImportService demo8 = new StreamingImportService();
+        demo8.run();
     }
 }
