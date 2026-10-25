@@ -26,21 +26,24 @@ bash
 mvn test
 ```
 
+## Сборка проекта
+
+Для компиляции всего проекта используется Maven. Выполните в корне проекта:
+```
+mvn compile
+```
+
 ## Запуск
 ```
-Практика 1 (Java 1) - задачи отдельно:
-bash
-java -cp target/classes java1.task01.Main
+Практика 1 (Java 1) - задачи отдельно (вместо NN указывать номер задачи от 01 до 15):
+java -cp target/classes java1.taskNN.Main
 
-Практика 5 (Java 3) - задачи отдельно:
-bash
-java -cp target/classes java3.task01.Main
+Практика 5 (Java 3) - задачи отдельно (вместо NN указывать номер задачи от 01 до 15):
+java -cp target/classes java3.taskNN.Main
 
 Практика 6 (Java 4) - один общий Main на все 15 задач:
-bash
 java -cp target/classes java4.Main
 
 Практика 7 (Java 5) - один общий Main на все задачи:
-bash
 java -cp target/classes java5.Main
 ```
