@@ -5,6 +5,7 @@ import java5.io.BufferedTextService;
 import java5.io.ResourcePipelineService;
 import java5.io.LazyLinesService;
 import java5.io.BinaryFormatService;
+import java5.io.SafeFileReplaceService;
 
 /* Общая точка входа для заданий Java 5. */
 public class Main {
@@ -28,5 +29,9 @@ public class Main {
         System.out.println("\n--- Задание 5: Бинарный формат ---");
         BinaryFormatService demo5 = new BinaryFormatService();
         demo5.run();
+
+        System.out.println("\n--- Задание 6: Временный файл и move ---");
+        SafeFileReplaceService demo6 = new SafeFileReplaceService();
+        demo6.run();
     }
 }
