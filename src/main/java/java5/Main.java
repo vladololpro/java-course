@@ -6,6 +6,7 @@ import java5.io.ResourcePipelineService;
 import java5.io.LazyLinesService;
 import java5.io.BinaryFormatService;
 import java5.io.SafeFileReplaceService;
+import java5.io.CatalogImporterService;
 
 /* Общая точка входа для заданий Java 5. */
 public class Main {
@@ -33,5 +34,9 @@ public class Main {
         System.out.println("\n--- Задание 6: Временный файл и move ---");
         SafeFileReplaceService demo6 = new SafeFileReplaceService();
         demo6.run();
+
+        System.out.println("\n--- Задание 7: Частично повреждённый импорт ---");
+        CatalogImporterService demo7 = new CatalogImporterService();
+        demo7.run();
     }
 }
