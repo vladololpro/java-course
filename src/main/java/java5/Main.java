@@ -2,6 +2,7 @@ package java5;
 
 import java5.io.CatalogFileService;
 import java5.io.BufferedTextService;
+import java5.io.ResourcePipelineService;
 
 /* Общая точка входа для заданий Java 5. */
 public class Main {
@@ -13,5 +14,9 @@ public class Main {
         System.out.println("\n--- Задание 2: Reader/Writer ---");
         BufferedTextService demo2 = new BufferedTextService();
         demo2.run();
+
+        System.out.println("\n--- Задание 3: Try-with-resources ---");
+        ResourcePipelineService demo3 = new ResourcePipelineService();
+        demo3.run();
     }
 }
