@@ -18,9 +18,14 @@ public class Main {
         DurationReducer reducer = new DurationReducer();
         reducer.demo();
         System.out.println();
-        
+
         System.out.println("=== Задание 4: Collectors и summary object ===");
         LevelSummarizer summarizer = new LevelSummarizer();
         summarizer.demo();
+        System.out.println();
+        
+        System.out.println("=== Задание 5: Optional как результат ===");
+        OptionalDemo optionalDemo = new OptionalDemo();
+        optionalDemo.demo();
     }
 }
