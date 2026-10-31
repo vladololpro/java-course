@@ -15,6 +15,7 @@
 - `java3/` — Практика 5. Коллекции и дженерики (List, Set, Map, Queue, PECS, LRU-кэш).
 - `java4/` — Практика 6. Строки, числа, время и деньги (String, BigDecimal, java.time).
 - `java5/` — Практика 7. Работа с файлами и потоками ввода-вывода.
+- `java6/` — Практика 8. Лямбда-выражения и Stream API.
 
 Все письменные разборы задач и теория находятся в файлах формата Markdown (`Answers*.md`) внутри соответствующих папок практик.
 
@@ -50,4 +51,7 @@ java -cp target/classes java4.Main
 
 Практика 7 (Java 5) - один общий Main на все задачи:
 java -cp target/classes java5.Main
+
+Практика 8 (Java 6) - один общий Main на все 7 задач:
+java -cp target/classes java6.Main
 ```
