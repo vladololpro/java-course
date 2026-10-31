@@ -1,6 +1,5 @@
-*vscode/
 out/
 target/
+*.class
+.vscode/
 catalog_dir/
-*.txt
-!README.md

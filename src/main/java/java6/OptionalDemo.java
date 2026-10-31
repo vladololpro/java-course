@@ -1,11 +1,23 @@
 package java6;
 
 import java6.domain.Course;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 /* Задание 5: Работа с Optional. */
 public class OptionalDemo {
+
+    public Optional<Course> findLongest(List<Course> courses) {
+        return courses.stream()
+                .max(Comparator.comparingInt(Course::duration));
+    }
+
+    public String describeLongest(List<Course> courses) {
+        return findLongest(courses)
+                .map(course -> course.code() + " (" + course.duration() + "h)")
+                .orElse("Нет курсов");
+    }
 
     public void demo() {
         List<Course> courses = List.of(
@@ -17,21 +29,9 @@ public class OptionalDemo {
         List<Course> emptyList = List.of();
 
         System.out.println("1. Поиск самого длинного курса (есть данные):");
-        Optional<Course> longest = courses.stream()
-                .max(java.util.Comparator.comparingInt(Course::duration));
-        
-        String result = longest
-                .map(c -> c.code() + " (" + c.duration() + "h)")
-                .orElse("Нет курсов");
-        System.out.println("  Самый длинный: " + result);
+        System.out.println("  Самый длинный: " + describeLongest(courses));
 
         System.out.println("\n2. Поиск самого длинного курса (пустой список):");
-        Optional<Course> longestEmpty = emptyList.stream()
-                .max(java.util.Comparator.comparingInt(Course::duration));
-        
-        String fallback = longestEmpty
-                .map(c -> c.code() + " (" + c.duration() + "h)")
-                .orElse("Нет курсов");
-        System.out.println("  Результат: " + fallback);
+        System.out.println("  Результат: " + describeLongest(emptyList));
     }
 }

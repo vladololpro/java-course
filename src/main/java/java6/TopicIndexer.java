@@ -2,6 +2,7 @@ package java6;
 
 import java6.domain.Course;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class TopicIndexer {
     }
 
     private String normalize(String topic) {
-        return topic.trim().toLowerCase();
+        return topic.trim().toLowerCase(Locale.ROOT);
     }
 
     public void demo() {
@@ -34,7 +35,7 @@ public class TopicIndexer {
         System.out.println("Обратный индекс тем:");
         index.forEach((topic, courseList) -> {
             System.out.println("Тема: '" + topic + "'");
-            courseList.forEach(c -> System.out.println("  - " + c.code()));
+            courseList.forEach(course -> System.out.println("  - " + course.code()));
         });
     }
 }

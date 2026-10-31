@@ -2,31 +2,30 @@ package java6;
 
 import java6.domain.Course;
 import java6.domain.DurationStats;
-import java.util.*;
+import java.util.IntSummaryStatistics;
+import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /* Задание 6: Собственный Collector. */
 public class CustomCollectorDemo {
+
     public static Collector<Course, ?, DurationStats> statsCollector() {
         return Collector.of(
-                () -> new int[]{0, 0, Integer.MAX_VALUE, Integer.MIN_VALUE},
-                
+                () -> new long[]{0L, 0L, Integer.MAX_VALUE, Integer.MIN_VALUE},
                 (acc, course) -> {
                     acc[0]++;
                     acc[1] += course.duration();
                     acc[2] = Math.min(acc[2], course.duration());
                     acc[3] = Math.max(acc[3], course.duration());
                 },
-                
-                (acc1, acc2) -> new int[]{
+                (acc1, acc2) -> new long[]{
                     acc1[0] + acc2[0],
                     acc1[1] + acc2[1],
                     Math.min(acc1[2], acc2[2]),
                     Math.max(acc1[3], acc2[3])
                 },
-                
-                acc -> new DurationStats(acc[0], acc[1], acc[2], acc[3])
+                acc -> new DurationStats(acc[0], acc[1], (int) acc[2], (int) acc[3])
         );
     }
 

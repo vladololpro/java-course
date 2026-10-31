@@ -1,7 +1,6 @@
 package java6;
 
 /* Общая точка входа для заданий Java 6. */
-
 public class Main {
     public static void main(String[] args) {
         System.out.println("=== Задание 1: Сортировка и детерминизм ===");
@@ -33,7 +32,7 @@ public class Main {
         CustomCollectorDemo collectorDemo = new CustomCollectorDemo();
         collectorDemo.demo();
         System.out.println();
-        
+
         System.out.println("=== Задание 7: Однопроходный отчет ===");
         CourseHubReport report = new CourseHubReport();
         report.demo();

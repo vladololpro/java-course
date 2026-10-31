@@ -30,10 +30,10 @@ public class LevelSummarizer {
         );
 
         Map<String, LevelSummary> summary = summarize(courses);
-        
+
         System.out.println("Сводка по уровням:");
-        summary.forEach((level, stats) -> 
-            System.out.printf("  Level %s: count=%d, avgDuration=%.1f%n", 
+        summary.forEach((level, stats) ->
+            System.out.printf("  Level %s: count=%d, avgDuration=%.1f%n",
                 level, stats.count(), stats.averageDuration())
         );
     }
