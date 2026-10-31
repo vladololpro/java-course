@@ -17,5 +17,10 @@ public class Main {
         System.out.println("=== Задание 3: reduce с правильной identity ===");
         DurationReducer reducer = new DurationReducer();
         reducer.demo();
+        System.out.println();
+        
+        System.out.println("=== Задание 4: Collectors и summary object ===");
+        LevelSummarizer summarizer = new LevelSummarizer();
+        summarizer.demo();
     }
 }
