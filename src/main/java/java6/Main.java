@@ -12,5 +12,10 @@ public class Main {
         System.out.println("=== Задание 2: flatMap и обратный индекс ===");
         TopicIndexer indexer = new TopicIndexer();
         indexer.demo();
+        System.out.println();
+
+        System.out.println("=== Задание 3: reduce с правильной identity ===");
+        DurationReducer reducer = new DurationReducer();
+        reducer.demo();
     }
 }
