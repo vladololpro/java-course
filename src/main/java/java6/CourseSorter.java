@@ -20,17 +20,17 @@ public class CourseSorter {
 
     public void demo() {
         List<Course> list1 = List.of(
-            new Course(1, "JAVA-2", "B", 40),
-            new Course(2, "JAVA-1", "A", 32),
-            new Course(3, "WEB-1", "A", 32), 
-            new Course(4, "SQL-1", "B", 20)
+            new Course(1, "JAVA-2", "B", 40, List.of()),
+            new Course(2, "JAVA-1", "A", 32, List.of()),
+            new Course(3, "WEB-1", "A", 32, List.of()), 
+            new Course(4, "SQL-1", "B", 20, List.of())
         );
 
         List<Course> list2 = List.of(
-            new Course(4, "SQL-1", "B", 20),
-            new Course(3, "WEB-1", "A", 32),
-            new Course(2, "JAVA-1", "A", 32),
-            new Course(1, "JAVA-2", "B", 40)
+            new Course(4, "SQL-1", "B", 20, List.of()),
+            new Course(3, "WEB-1", "A", 32, List.of()),
+            new Course(2, "JAVA-1", "A", 32, List.of()),
+            new Course(1, "JAVA-2", "B", 40, List.of())
         );
 
         List<Course> sorted1 = sortCourses(list1);

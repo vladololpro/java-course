@@ -7,5 +7,10 @@ public class Main {
         System.out.println("=== Задание 1: Сортировка и детерминизм ===");
         CourseSorter sorter = new CourseSorter();
         sorter.demo();
+        System.out.println();
+
+        System.out.println("=== Задание 2: flatMap и обратный индекс ===");
+        TopicIndexer indexer = new TopicIndexer();
+        indexer.demo();
     }
 }
