@@ -28,9 +28,14 @@ public class Main {
         OptionalDemo optionalDemo = new OptionalDemo();
         optionalDemo.demo();
         System.out.println();
-        
+
         System.out.println("=== Задание 6: Собственный collector ===");
         CustomCollectorDemo collectorDemo = new CustomCollectorDemo();
         collectorDemo.demo();
+        System.out.println();
+        
+        System.out.println("=== Задание 7: Однопроходный отчет ===");
+        CourseHubReport report = new CourseHubReport();
+        report.demo();
     }
 }
