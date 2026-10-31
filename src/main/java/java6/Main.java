@@ -23,9 +23,14 @@ public class Main {
         LevelSummarizer summarizer = new LevelSummarizer();
         summarizer.demo();
         System.out.println();
-        
+
         System.out.println("=== Задание 5: Optional как результат ===");
         OptionalDemo optionalDemo = new OptionalDemo();
         optionalDemo.demo();
+        System.out.println();
+        
+        System.out.println("=== Задание 6: Собственный collector ===");
+        CustomCollectorDemo collectorDemo = new CustomCollectorDemo();
+        collectorDemo.demo();
     }
 }
