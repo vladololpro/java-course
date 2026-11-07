@@ -14,6 +14,8 @@ public class ResultPrinter {
             case WaitListed w ->
                 "Student " + w.studentId() + " waitlisted for course "
                     + w.courseId() + ", position " + w.position();
+            case Pending p ->
+                "Student " + p.studentId() + " pending for course " + p.courseId();
         };
     }
 }

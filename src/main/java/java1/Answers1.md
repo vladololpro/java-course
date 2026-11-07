@@ -189,6 +189,7 @@ public interface ClockProvider {
 - Класс `BrokenEmailSender`, в котором `send(Object)` - это перегрузка, а не override. Без `@Override` компилятор молчит.
 - Класс `FixedSender` и `FixedEmailSender` с корректным override и `@Override`.
 - `Main` демонстрирует разницу: сломанный случай даёт родительскую реализацию, исправленный - наследника.
+- Примеры ошибок в параметре, доступе и возвращаемом типе собраны в `task06/BrokenMethods.txt`.
 
 ## Ловушка без `@Override`
 - Код в `BrokenEmailSender` компилируется без ошибок:
@@ -198,6 +199,41 @@ broken.send("hello");   // → base.send: hello, а не broken.send(Object)
 ```
 - Компилятор видит `send(String)` в статическом типе переменной (`BrokenSender`). JVM ищет `send(String)` в динамическом типе (`BrokenEmailSender`), не находит (там только `send(Object)`), поднимается в родителя и вызывает его реализацию.
 - Программист мог думать, что переопределил `send`, но фактически добавил перегруженный метод. С `@Override` компилятор поймал бы это сразу.
+
+## Ошибки в доступе и возвращаемом типе
+- Если сигнатуры совпадают, но наследник сужает доступ, это ошибка компиляции:
+```java
+class Parent {
+    public String status() { return "base"; }
+}
+
+class Child extends Parent {
+    @Override
+    protected String status() { return "child"; }
+}
+```
+```
+error: status() in Child cannot override status() in Parent
+  attempting to assign weaker access privileges; was public
+```
+
+- Если сигнатуры совпадают, а возвращаемый тип несовместим, это тоже ошибка компиляции:
+```java
+class Parent {
+    public String send(String message) { return "base"; }
+}
+
+class Child extends Parent {
+    @Override
+    public Object send(String message) { return "child"; }
+}
+```
+```
+error: send(String) in Child cannot override send(String) in Parent
+  return type Object is not compatible with String
+```
+
+- Исправление простое: в наследнике оставляем тот же или более широкий доступ и совместимый возвращаемый тип. В наших классах `FixedSender` и `FixedEmailSender` это сделано: `public String send(String)` и `@Override`.
 
 ## Правило
 - Везде, где ожидается переопределение - ставь `@Override`. Это бесплатная проверка компилятора: если метод не переопределяет родительский, компиляция упадёт.
@@ -209,8 +245,10 @@ broken.send("hello");   // → base.send: hello, а не broken.send(Object)
 ## Что сделано
 - Интерфейс `NotificationSender` как общий контракт.
 - Реальные реализации: `EmailSender`, `ConsoleSender`.
+- Старый вариант «до рефакторинга»: `LoggingEmailSender extends EmailSender`.
 - Декораторы: `LoggingSender`, `RetrySender`, `MetricsSender`. Каждый содержит внутри другой `NotificationSender` и делегирует ему вызов, добавляя своё поведение.
-- `Main` показывает два порядка композиции и разницу поведения.
+- `FlakySender` временно бросает исключение, чтобы было видно, что `RetrySender` действительно повторяет отправку после ошибки.
+- `Main` показывает старый вариант и два порядка композиции с разным поведением.
 
 ## Почему композиция, а не наследование
 - Наследование дало бы взрыв комбинаций: под каждый аспект и его порядок - отдельный подкласс (`LoggingEmailSender`, `RetryLoggingEmailSender`, `MetricsRetryLoggingEmailSender` и т.д.). Это уже 2^n классов на n аспектов.
@@ -224,50 +262,52 @@ broken.send("hello");   // → base.send: hello, а не broken.send(Object)
 - Клиент видит один `NotificationSender` и не знает, что внутри цепочка.
 
 ## Два порядка композиции
-- Порядок 1: `Logging(Retry(Email))`.
+- Порядок 1: `Logging(Retry(Flaky(Email)))`.
 ```
 LOG before: hello
-RETRY attempt 1/2
-  [EMAIL] hello
-RETRY attempt 2/2
+RETRY attempt 1/3
+RETRY error: temporary failure
+RETRY attempt 2/3
   [EMAIL] hello
 LOG after: hello
 ```
-- Логирование снаружи - видит retry как одно событие. Пара LOG один раз.
+- Логирование снаружи - видит всю цепочку retry как одно событие. Пара LOG один раз.
 
-- Порядок 2: `Retry(Logging(Email))`.
+- Порядок 2: `Retry(Logging(Flaky(Email)))`.
 ```
-RETRY attempt 1/2
+RETRY attempt 1/3
+LOG before: hello
+LOG after: hello
+RETRY error: temporary failure
+RETRY attempt 2/3
 LOG before: hello
   [EMAIL] hello
 LOG after: hello
-RETRY attempt 2/2
-LOG before: hello
-  [EMAIL] hello
-LOG after: hello
 ```
-- Логирование внутри - вызывается на каждой попытке. Пара LOG дважды.
+- Логирование внутри - вызывается на каждой попытке, даже на неудачной. Пара LOG дважды.
+- Разница видна именно из-за `FlakySender`: первая попытка падает, вторая проходит.
 
 `----------------------------------`
 
 # Задача 8. Нарушение LSP
 
 ## Что было бы неправильно
-- Стандартная «сломанная» иерархия:
+- «Сломанная» иерархия есть в коде: `CourseRepository` и `BrokenReadOnlyCourseRepository`.
 ```java
 class CourseRepository {
     void save(Course c) { ... }
     Optional<Course> findById(long id) { ... }
 }
 
-class ReadOnlyCourseRepository extends CourseRepository {
+class BrokenReadOnlyCourseRepository extends CourseRepository {
     @Override
     void save(Course c) {
         throw new UnsupportedOperationException();
     }
 }
 ```
-- Проблема: клиент, работающий с `CourseRepository`, ожидает, что `save` сохраняет. Если ему подсунут `ReadOnlyCourseRepository`, метод упадёт в runtime. Клиент не мог этого предвидеть - статический тип обещал работающий `save`.
+- Проблема: клиент, работающий с `CourseRepository`, ожидает, что `save` сохраняет. Если ему подсунут `BrokenReadOnlyCourseRepository`, метод упадёт в runtime. Клиент не мог этого предвидеть - статический тип обещал работающий `save`.
+- В `Main` это показано через `try/catch`: программа ловит `UnsupportedOperationException` и печатает сообщение о проблеме.
 - Это нарушение принципа подстановки Лисков (LSP): объект наследника должен быть подставляем вместо объекта родителя без сюрпризов.
 
 ## Что сделано
@@ -324,6 +364,7 @@ CapacityPolicy capacity = new CapacityPolicy(1);
 EnrollmentService capService = new EnrollmentService(capacity);
 ```
 - Один и тот же `EnrollmentService`, разные политики, разное поведение. Добавить четвёртую политику - создать новый класс, не трогая сервис.
+- В `CapacityPolicy` счётчик увеличивается после успешного зачисления. В `Main` это сделано после каждого успешного `enroll`: при `capacity = 1` первый студент проходит, второй получает отказ.
 
 `----------------------------------`
 
@@ -339,7 +380,7 @@ EnrollmentService capService = new EnrollmentService(capacity);
 
 ## Почему возникает конфликт
 - Если класс реализует два интерфейса, и оба содержат default-метод с одинаковой сигнатурой и разными реализациями, компилятор не знает, какую выбрать.
-- Проверено экспериментально. Временно создан класс:
+- Проверено экспериментально. Сломанный класс лежит в `task10/BrokenBoth.txt` - он специально не входит в сборку, иначе проект бы не компилировался:
 ```java
 package java1.task10;
 
@@ -394,16 +435,18 @@ if (o == null || getClass() != o.getClass()) return false;
 
 ## Почему final value class проще
 - Если Point объявлен final, никто не может создать ColoredPoint extends Point. Проблема исчезает в зародыше: нет наследников - нет конфликтов equals.
+- Контракт equals требует симметричности и транзитивности. В расширяемой иерархии наследник с новым полем вынужден либо игнорировать это поле в equals (тогда равенство неполное), либо сравнивать только с своим типом (тогда ломается симметрия с базой). Оба варианта плохие.
+- `final` value class запрещает наследников, поэтому все объекты одного класса и equals можно сделать простым и предсказуемым. А цвет добавляется через композицию, не меняя равенство самой точки.
 
 `----------------------------------`
 
 # Задачка 12. Sealed-иерархия результата
 
 ## Что сделано
-- `sealed interface EnrollmentResult` с permits на три типа: `Accepted`, `Rejected`, `WaitListed`.
-- Все три типа - final.
+- `sealed interface EnrollmentResult` с permits на четыре типа: `Accepted`, `Rejected`, `WaitListed`, `Pending`.
+- Все четыре типа - final.
 - `ResultPrinter.describe` использует exhaustive switch без default.
-- `Main` демонстрирует все три варианта.
+- `Main` демонстрирует все четыре варианта.
 
 ## Что такое sealed
 - `sealed` - механизм, ограничивающий, кто может наследоваться от класса или реализовывать интерфейс. Только типы, перечисленные в `permits`, могут быть подтипами. Больше никто - даже в другом пакете - не сможет.
@@ -413,14 +456,15 @@ if (o == null || getClass() != o.getClass()) return false;
 - Компилятор знает все возможные реализации sealed-интерфейса. Поэтому switch без default может быть проверен на полноту: если не покрыт хотя бы один случай, компиляция падает.
 - Без sealed такой switch потребовал бы default, который ловит «всё остальное» - и маскирует пропущенные случаи.
 
-## Эксперимент: добавление нового permitted-типа
-- Временно создан `Pending implements EnrollmentResult`, добавлен в `permits`. Компиляция сразу упала в `ResultPrinter.java`:
+## Добавление нового permitted-типа
+- Создан `Pending implements EnrollmentResult` и добавлен в `permits`. После этого компиляция сразу упала в `ResultPrinter.java`:
 ```
 error: the switch expression does not cover all possible input values
         return switch (result) {
                ^
 ```
-- Компилятор указал точное место, где switch не покрывает новый случай. Это главная ценность sealed: невозможно забыть обработать новый вариант - компилятор заставит.
+- Компилятор указал точное место, где switch не покрывает новый случай. После добавления ветки `case Pending p -> ...` сборка снова проходит.
+- Это главная ценность sealed: невозможно забыть обработать новый вариант - компилятор заставит.
 
 `----------------------------------`
 

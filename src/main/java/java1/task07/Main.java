@@ -6,16 +6,22 @@ public class Main {
     public static void main(String[] args) {
 
         NotificationSender email = new EmailSender();
-        System.out.println("=== Logging(Retry(Email)) ===");
+
+        System.out.println("=== Было: LoggingEmailSender extends EmailSender ===");
+        NotificationSender oldStyle = new LoggingEmailSender();
+        oldStyle.send("hello");
+        System.out.println();
+
+        System.out.println("=== Logging(Retry(Flaky(Email))) ===");
         NotificationSender order1 = new LoggingSender(
-            new RetrySender(email, 2)
+            new RetrySender(new FlakySender(email, 1), 3)
         );
         order1.send("hello");
         System.out.println();
 
-        System.out.println("=== Retry(Logging(Email)) ===");
+        System.out.println("=== Retry(Logging(Flaky(Email))) ===");
         NotificationSender order2 = new RetrySender(
-            new LoggingSender(email), 2
+            new LoggingSender(new FlakySender(email, 1)), 3
         );
         order2.send("hello");
         System.out.println();

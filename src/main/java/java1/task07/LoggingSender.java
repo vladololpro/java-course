@@ -13,7 +13,10 @@ public class LoggingSender implements NotificationSender {
     @Override
     public void send(String message) {
         System.out.println("LOG before: " + message);
-        inner.send(message);
-        System.out.println("LOG after: " + message);
+        try {
+            inner.send(message);
+        } finally {
+            System.out.println("LOG after: " + message);
+        }
     }
 }

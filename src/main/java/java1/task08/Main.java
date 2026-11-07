@@ -23,6 +23,15 @@ public class Main {
 
     public static void main(String[] args) {
 
+        System.out.println("--- broken inheritance ---");
+        CourseRepository broken = new BrokenReadOnlyCourseRepository();
+        try {
+            broken.save(new Course(1, "Java Fundamentals", 32));
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Problem: " + e.getMessage());
+        }
+        System.out.println();
+
         ReadOnlyCourseRepository readOnly = new ReadOnlyCourseRepository();
         readOnly.seed(new Course(1, "Java Fundamentals", 32));
 

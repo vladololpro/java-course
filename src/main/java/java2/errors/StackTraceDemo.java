@@ -5,31 +5,38 @@ public class StackTraceDemo {
 
     public void run() {
         try {
-            methodA();
-        } catch (Exception e) {
-            System.out.println("Тип: " + e.getClass().getName());
-            System.out.println("Сообщение: " + e.getMessage());
-            System.out.println("Где возникло (первый элемент): " + e.getStackTrace()[0]);
-            System.out.println("Цепочка вызовов:");
-            for (StackTraceElement element : e.getStackTrace()) {
-                System.out.println("  at " + element);
-            }
+            methodA(0);
+        } catch (ArithmeticException e) {
+            printTrace(e);
+        }
+
+        System.out.println("\nПосле исправления причины:");
+        System.out.println("Результат: " + methodA(5));
+    }
+
+    private void printTrace(ArithmeticException e) {
+        System.out.println("Тип: " + e.getClass().getName());
+        System.out.println("Сообщение: " + e.getMessage());
+        System.out.println("Где возникло (первый элемент): " + e.getStackTrace()[0]);
+        System.out.println("Цепочка вызовов:");
+        for (StackTraceElement element : e.getStackTrace()) {
+            System.out.println("  at " + element);
         }
     }
 
-    private void methodA() {
-        methodB();
+    private int methodA(int divisor) {
+        return methodB(divisor);
     }
 
-    private void methodB() {
-        methodC();
+    private int methodB(int divisor) {
+        return methodC(divisor);
     }
 
-    private void methodC() {
-        methodD();
+    private int methodC(int divisor) {
+        return methodD(divisor);
     }
 
-    private void methodD() {
-        int result = 10 / 0;
+    private int methodD(int divisor) {
+        return 10 / divisor;
     }
 }

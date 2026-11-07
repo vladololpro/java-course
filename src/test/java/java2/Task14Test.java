@@ -1,11 +1,13 @@
 package java2;
 
 import java2.domain.CourseImporter;
+import java2.errors.CourseImportException;
+import java2.errors.ErrorCode;
 import org.junit.jupiter.api.Test;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,25 +22,45 @@ class Task14Test {
     }
 
     @Test
-    void importCourses_malformedRecord_shouldThrowAndNotReturnPartial() {
+    void importCourses_allValid_shouldReturnAllRecords() throws CourseImportException {
         CourseImporter importer = new CourseImporter();
-        Reader reader = new StringReader("GOOD1: OK\nGOOD2: OK\nBAD_LINE");
+        Reader reader = new StringReader("GOOD1: OK\nGOOD2: OK");
 
-        IOException ex = assertThrows(IOException.class, () -> importer.importCourses(reader));
-        assertTrue(ex.getMessage().contains("Malformed record at line 3"));
+        List<String> result = importer.importCourses(reader);
+
+        assertEquals(List.of("GOOD1: OK", "GOOD2: OK"), result);
     }
 
     @Test
-    void importCourses_errorInReadAndClose_shouldHaveSuppressedException() {
+    void importCourses_malformedRecord_shouldKeepProcessedCountAndNotReturnPartial() {
+        CourseImporter importer = new CourseImporter();
+        Reader reader = new StringReader("GOOD1: OK\nGOOD2: OK\nBAD_LINE");
+
+        CourseImportException ex = assertThrows(
+            CourseImportException.class,
+            () -> importer.importCourses(reader)
+        );
+
+        assertEquals(3, ex.getRecordNumber());
+        assertEquals(2, ex.getProcessedRecords(), "До ошибки успешно обработаны две записи");
+        assertEquals(ErrorCode.IMPORT_MALFORMED_RECORD, ex.getErrorCode());
+        assertTrue(ex.getMessage().contains("Malformed record"));
+    }
+
+    @Test
+    void importCourses_malformedRecordAndCloseError_shouldHaveSuppressedException() {
         CourseImporter importer = new CourseImporter();
         Reader reader = new FailingReader("BAD_LINE");
 
-        IOException ex = assertThrows(IOException.class, () -> importer.importCourses(reader));
-        
-        assertTrue(ex.getMessage().contains("Malformed record"));
-        
+        CourseImportException ex = assertThrows(
+            CourseImportException.class,
+            () -> importer.importCourses(reader)
+        );
+
+        assertEquals(ErrorCode.IMPORT_MALFORMED_RECORD, ex.getErrorCode());
+
         Throwable[] suppressed = ex.getSuppressed();
-        assertEquals(1, suppressed.length, "Должно быть подавленное исключение");
+        assertEquals(1, suppressed.length, "Должно быть подавленное исключение закрытия");
         assertTrue(suppressed[0].getMessage().contains("Close failed!"));
     }
 }

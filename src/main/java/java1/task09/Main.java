@@ -31,7 +31,9 @@ public class Main {
         EnrollmentService capService = new EnrollmentService(capacity);
 
         System.out.println("--- CapacityPolicy(1) ---");
-        capService.enroll(adult, course);
+        if (capService.enroll(adult, course)) {
+            capacity.enrollOne();
+        }
         if (capService.enroll(young, course)) {
             capacity.enrollOne();
         }

@@ -9,8 +9,15 @@ public class TryCatchFinallyDemo {
         System.out.println("\n2. Исключение в try, ловится в catch:");
         System.out.println("Результат: " + returnFromCatch());
 
-        System.out.println("\n3. Ошибка в finally (скрывает исключение):");
+        System.out.println("\n3. return в finally скрывает исключение (антипаттерн):");
         System.out.println("Результат: " + hideException());
+
+        System.out.println("\n4. То же исключение без return в finally:");
+        try {
+            throwFromTry();
+        } catch (RuntimeException e) {
+            System.out.println("Поймано снаружи: " + e.getMessage());
+        }
     }
 
     private String returnFromTry() {
@@ -41,6 +48,15 @@ public class TryCatchFinallyDemo {
         } finally {
             System.out.println("  finally");
             return "finally";
+        }
+    }
+
+    private void throwFromTry() {
+        try {
+            System.out.println("  try");
+            throw new RuntimeException("Исходное исключение");
+        } finally {
+            System.out.println("  finally");
         }
     }
 }

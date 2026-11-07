@@ -1,0 +1,12 @@
+Класс с конфликтом default-методов (специально не компилируется):
+
+public class BrokenBoth implements Notifier, Logger {
+}
+
+Ошибка компилятора:
+
+error: class BrokenBoth inherits unrelated defaults for describe()
+       from types Notifier and Logger
+
+Поэтому в проекте оставлены только исправленные варианты:
+FixedBoth, CombinedBoth и CustomBoth.

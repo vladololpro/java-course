@@ -14,9 +14,19 @@ public class RetrySender implements NotificationSender {
 
     @Override
     public void send(String message) {
+        RuntimeException lastError = null;
+
         for (int i = 1; i <= attempts; i++) {
-            System.out.println("RETRY attempt " + i + "/" + attempts);
-            inner.send(message);
+            try {
+                System.out.println("RETRY attempt " + i + "/" + attempts);
+                inner.send(message);
+                return;
+            } catch (RuntimeException e) {
+                lastError = e;
+                System.out.println("RETRY error: " + e.getMessage());
+            }
         }
+
+        throw new IllegalStateException("all attempts failed", lastError);
     }
 }

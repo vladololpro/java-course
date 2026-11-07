@@ -8,7 +8,8 @@ public class Main {
         EnrollmentResult[] results = {
             new Accepted(1, 10),
             new Rejected(2, 10, "no seats"),
-            new WaitListed(3, 10, 1)
+            new WaitListed(3, 10, 1),
+            new Pending(4, 10)
         };
 
         for (EnrollmentResult result : results) {

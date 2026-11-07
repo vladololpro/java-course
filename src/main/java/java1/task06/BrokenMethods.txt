@@ -1,0 +1,46 @@
+Набор ошибочных методов из условия.
+
+1) Ошибка в параметре (компилируется, но это перегрузка, а не override):
+
+public class BrokenSender {
+    public String send(String message) { return "base"; }
+}
+
+public class BrokenEmailSender extends BrokenSender {
+    public String send(Object message) { return "broken"; }
+}
+
+Вызов broken.send("hello") через ссылку BrokenSender вызовет базовый
+send(String), а не send(Object).
+
+2) Ошибка в доступе (не компилируется):
+
+public class Parent {
+    public String status() { return "base"; }
+}
+
+public class Child extends Parent {
+    @Override
+    protected String status() { return "child"; }
+}
+
+error: status() in Child cannot override status() in Parent
+  attempting to assign weaker access privileges; was public
+
+3) Ошибка в возвращаемом типе (не компилируется):
+
+public class Parent {
+    public String send(String message) { return "base"; }
+}
+
+public class Child extends Parent {
+    @Override
+    public Object send(String message) { return "child"; }
+}
+
+error: send(String) in Child cannot override send(String) in Parent
+  return type Object is not compatible with String
+
+Исправленные версии находятся в FixedSender и FixedEmailSender:
+там совпадают сигнатуры, доступ не сужается, возвращаемый тип совместим,
+и везде стоит @Override.

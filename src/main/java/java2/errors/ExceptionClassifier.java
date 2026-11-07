@@ -17,7 +17,8 @@ public class ExceptionClassifier {
             "Ошибка парсинга числа (NumberFormat)",
             "Файл занят другим процессом (IOException)",
             "Деление на ноль",
-            "Ссылка на null"
+            "Ссылка на null",
+            "Неизвестная ситуация"
         );
 
         for (String s : situations) {

@@ -47,11 +47,14 @@ public class Course {
         return remainingHours() == 0;
     }
     public void completeHours(int hours) {
-        if (remainingHours() < hours) {
-            System.out.println("ERR");
-        } else {
-            this.completedHours += hours;
+        if (hours < 0) {
+            throw new IllegalArgumentException("Hours cannot be negative: " + hours);
         }
+        if (hours > remainingHours()) {
+            throw new IllegalArgumentException(
+                "Cannot complete " + hours + " hours, remaining: " + remainingHours());
+        }
+        this.completedHours += hours;
     }
 
     public static void main(String[] args) {
