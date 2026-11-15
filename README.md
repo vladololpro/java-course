@@ -21,6 +21,7 @@
 - `java4/` — Практика 6. Строки, числа, время и деньги (String, BigDecimal, java.time).
 - `java5/` — Практика 7. Работа с файлами и потоками ввода-вывода.
 - `java6/` — Практика 8. Лямбда-выражения и Stream API.
+- `java7/` — Практика 9. Основы конкурентности (потоки, synchronized, volatile, ConcurrentHashMap, BlockingQueue, ExecutorService).
 
 Письменные разборы задач и теория находятся в папках практик: `src/main/java/java1/Answers1.md` … `src/main/java/java6/Answers6.md`.
 
@@ -66,4 +67,7 @@ java -cp target/classes java5.Main
 
 # Практика 8 (Java 6) — один общий Main на все 7 задач
 java -cp target/classes java6.Main
+
+# Практика 9 (Java 7) — один общий Main на все 6 задач
+java -cp target/classes java7.Main
 ```
