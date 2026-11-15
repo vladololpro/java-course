@@ -10,10 +10,6 @@ public class StopFlagWorker implements AutoCloseable {
     private final CountDownLatch started = new CountDownLatch(1);
     private final CountDownLatch stopped = new CountDownLatch(1);
 
-    /*
-     * Некорректный вариант из задания — то же поле без volatile.
-     * Тогда worker может никогда не увидеть новое значение stop.
-     */
     private volatile boolean stop;
 
     private Thread thread;

@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EnrollmentPipeline {
 
@@ -39,11 +40,8 @@ public class EnrollmentPipeline {
         BlockingQueue<EnrollmentRequest> queue = new ArrayBlockingQueue<>(queueCapacity);
         ConcurrentLinkedQueue<ProcessedRequest> processed = new ConcurrentLinkedQueue<>();
         CountDownLatch producersDone = new CountDownLatch(producerCount);
+        AtomicReference<Throwable> producerFailure = new AtomicReference<>();
 
-        /*
-         * Consumers часто блокируются на take(), поэтому это blocking-сценарий:
-         * в пуле должно хватать потоков и производителям, и потребителям.
-         */
         ExecutorService executor = Executors.newFixedThreadPool(
                 producerCount + consumerCount,
                 threadFactory()
@@ -63,6 +61,8 @@ public class EnrollmentPipeline {
                         }
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
+                    } catch (RuntimeException e) {
+                        producerFailure.compareAndSet(null, e);
                     } finally {
                         producersDone.countDown();
                     }
@@ -93,6 +93,11 @@ public class EnrollmentPipeline {
 
             if (!producersDone.await(10, TimeUnit.SECONDS)) {
                 throw new IllegalStateException("Producers не завершились за отведённое время");
+            }
+
+            Throwable failure = producerFailure.get();
+            if (failure != null) {
+                throw new IllegalStateException("Producer завершился с ошибкой", failure);
             }
 
             for (int c = 0; c < consumerCount; c++) {

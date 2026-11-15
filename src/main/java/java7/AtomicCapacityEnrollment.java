@@ -23,14 +23,16 @@ public class AtomicCapacityEnrollment implements CapacityEnrollment {
             return false;
         }
 
-        int occupied = occupiedSeats.incrementAndGet();
-        if (occupied > capacity) {
-            occupiedSeats.decrementAndGet();
-            students.remove(studentId);
-            return false;
+        while (true) {
+            int occupied = occupiedSeats.get();
+            if (occupied >= capacity) {
+                students.remove(studentId);
+                return false;
+            }
+            if (occupiedSeats.compareAndSet(occupied, occupied + 1)) {
+                return true;
+            }
         }
-
-        return true;
     }
 
     @Override

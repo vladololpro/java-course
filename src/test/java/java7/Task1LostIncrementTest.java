@@ -26,6 +26,23 @@ class Task1LostIncrementTest {
     }
 
     @Test
+    @Timeout(30)
+    void stepCounterLosesIncrements() throws Exception {
+        int threads = 16;
+        int increments = 20_000;
+        int expected = threads * increments;
+        boolean lostIncrements = false;
+
+        for (int round = 1; round <= 10 && !lostIncrements; round++) {
+            int actual = LostIncrementDemo.runStepCounter(threads, increments);
+            assertTrue(actual <= expected, "Счётчик не должен превышать ожидаемое значение");
+            lostIncrements = actual < expected;
+        }
+
+        assertTrue(lostIncrements, "Ожидалась потеря инкрементов хотя бы в одном раунде");
+    }
+
+    @Test
     @Timeout(20)
     void synchronizedCounterKeepsExactValue() throws Exception {
         int threads = 8;

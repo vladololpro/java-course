@@ -22,6 +22,20 @@ public class LostIncrementDemo {
         }
     }
 
+    public static class StepCounter {
+        private int value;
+
+        public void increment() {
+            int current = value;
+            int next = current + 1;
+            value = next;
+        }
+
+        public int value() {
+            return value;
+        }
+    }
+
     public static class SynchronizedCounter {
         private int value;
 
@@ -53,6 +67,12 @@ public class LostIncrementDemo {
 
     public static int runUnsafe(int threads, int increments) throws InterruptedException {
         UnsafeCounter counter = new UnsafeCounter();
+        runConcurrently(threads, increments, counter::increment);
+        return counter.value();
+    }
+
+    public static int runStepCounter(int threads, int increments) throws InterruptedException {
+        StepCounter counter = new StepCounter();
         runConcurrently(threads, increments, counter::increment);
         return counter.value();
     }
