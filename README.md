@@ -23,7 +23,7 @@
 - `java6/` — Практика 8. Лямбда-выражения и Stream API.
 - `java7/` — Практика 9. Основы конкурентности (потоки, synchronized, volatile, ConcurrentHashMap, BlockingQueue, ExecutorService).
 
-Письменные разборы задач и теория находятся в папках практик: `src/main/java/java1/Answers1.md` … `src/main/java/java6/Answers6.md`.
+Письменные разборы задач и теория находятся в папках практик: `src/main/java/java1/Answers1.md` … `src/main/java/java7/Answers7.md`.
 
 Unit-тесты находятся в `src/test/java/` и разделены по практикам.
 
