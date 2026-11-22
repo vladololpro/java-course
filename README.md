@@ -22,8 +22,9 @@
 - `java5/` — Практика 7. Работа с файлами и потоками ввода-вывода.
 - `java6/` — Практика 8. Лямбда-выражения и Stream API.
 - `java7/` — Практика 9. Основы конкурентности (потоки, synchronized, volatile, ConcurrentHashMap, BlockingQueue, ExecutorService).
+- `java8/` — Практика 10. Асинхронные вычисления и современная конкурентность (Future, CompletableFuture, executors, virtual threads, deadline).
 
-Письменные разборы задач и теория находятся в папках практик: `src/main/java/java1/Answers1.md` … `src/main/java/java7/Answers7.md`.
+Письменные разборы задач и теория находятся в папках практик: `src/main/java/java1/Answers1.md` … `src/main/java/java8/Answers8.md`.
 
 Unit-тесты находятся в `src/test/java/` и разделены по практикам.
 
@@ -70,4 +71,7 @@ java -cp target/classes java6.Main
 
 # Практика 9 (Java 7) — один общий Main на все 6 задач
 java -cp target/classes java7.Main
+
+# Практика 10 (Java 8) — один общий Main на все 6 задач
+java -cp target/classes java8.Main
 ```
