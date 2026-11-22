@@ -127,12 +127,15 @@ public class LostIncrementDemo {
 
         try {
             int unsafe = runUnsafe(DEFAULT_THREADS, DEFAULT_INCREMENTS);
+            int step = runStepCounter(DEFAULT_THREADS, DEFAULT_INCREMENTS);
             int synchronizedValue = runSynchronized(DEFAULT_THREADS, DEFAULT_INCREMENTS);
             int synchronizedBlockValue = runSynchronizedBlock(DEFAULT_THREADS, DEFAULT_INCREMENTS);
 
             System.out.println("Ожидаемое значение: " + expected);
             System.out.println("Без синхронизации: " + unsafe
                     + " (потеряно " + (expected - unsafe) + ")");
+            System.out.println("Явные шаги read/compute/write: " + step
+                    + " (потеряно " + (expected - step) + ")");
             System.out.println("synchronized-метод: " + synchronizedValue);
             System.out.println("synchronized-блок: " + synchronizedBlockValue);
         } catch (InterruptedException e) {

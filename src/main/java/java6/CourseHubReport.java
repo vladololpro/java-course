@@ -20,7 +20,7 @@ public class CourseHubReport {
             List<EnrollmentEvent> anomalies) {
     }
 
-    public Report buildReport(List<EnrollmentEvent> events) {
+    public Report buildReport(Iterable<EnrollmentEvent> events) {
         Set<StudentCourseKey> seen = new HashSet<>();
         Set<Long> uniqueStudents = new HashSet<>();
         Map<String, long[]> courseStats = new TreeMap<>();

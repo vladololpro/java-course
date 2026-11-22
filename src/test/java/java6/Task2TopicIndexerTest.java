@@ -3,6 +3,7 @@ package java6;
 import java6.domain.Course;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,16 @@ class Task2TopicIndexerTest {
         assertEquals(List.of(java2), index.get("streams"));
         assertEquals(List.of(sql), index.get("databases"));
         assertEquals(List.of(sql), index.get("sql"));
+    }
+
+    @Test
+    void normalizesAndDeduplicatesModulesWithinOneCourse() {
+        Course course = new Course(1, "JAVA-1", "A", 32, List.of("Java", " java ", "JAVA"));
+
+        Map<String, List<Course>> index = indexer.buildTopicIndex(List.of(course));
+
+        assertEquals(List.of("java"), new ArrayList<>(index.keySet()));
+        assertEquals(List.of(course), index.get("java"));
     }
 
     @Test

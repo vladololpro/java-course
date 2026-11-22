@@ -4,6 +4,7 @@ import java6.domain.Course;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /* Задание 2: Использование flatMap для создания обратного индекса. */
@@ -12,9 +13,12 @@ public class TopicIndexer {
     public Map<String, List<Course>> buildTopicIndex(List<Course> courses) {
         return courses.stream()
                 .flatMap(course -> course.modules().stream()
-                        .map(topic -> Map.entry(normalize(topic), course)))
+                        .map(this::normalize)
+                        .distinct()
+                        .map(topic -> Map.entry(topic, course)))
                 .collect(Collectors.groupingBy(
                         Map.Entry::getKey,
+                        TreeMap::new,
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())
                 ));
     }
